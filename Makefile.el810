@@ -7,7 +7,7 @@
 #
 # 1. Set your kernel src directory.
 #    Example:
-#        -bash-4.1# export KERNEL_SRC=/usr/src/kernels/5.14.0-427.el8.x86_64/
+#        -bash-4.1# export KERNEL_SRC=/usr/src/4.18.0-553.el8_10.x86_64/
 #
 # 2. Run "make" to build driver binary files(.ko files).
 #    Example:
