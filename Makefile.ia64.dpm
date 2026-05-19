@@ -1,0 +1,127 @@
+#
+# $Log$
+#
+# $Id$
+#
+# Makefile for FC-Adapter Driver(Linux)
+#
+CC = gcc
+
+
+OSVER0 = 2.4.25
+
+SMP =
+#if this system is not the SMP kernel, the parameter SMP shoule be NULL.
+
+INCDIR		=	.
+OUT_OBJ0	=	$(OSVER0)
+OUT_LOAD0	=	$(OSVER0)
+OUT_LOG0	=	log$(OSVER0)
+
+# OUT_CONF_OBJ0	=	$(OSVER0)
+# OUT_CONF LOAD0	=	$(OSVER0)
+# OUT_CONF_LOG0	=	log$(OSVER0)
+
+check_gcc = $(shell if $(CC) $(1) -S -o /dev/null -xc /dev/null > /dev/null 2>&1; then echo "$(1)"; else echo "$(2)"; fi)
+
+
+#DBGFLAGS = -g -D_HFC_DEBUG -D_HFC_MSGLVL1 -D_LINUX_COM
+
+INCLUDE0 = -I$(INCDIR) -I/usr/src/linux-$(OSVER0)/include -I/usr/src/linux-$(OSVER0)/include/../drivers/scsi
+
+OBJS64DPM =	$(OUT_OBJ0)/hfcl_version64.o \
+	$(OUT_OBJ0)/hfcl_detect64.o \
+	$(OUT_OBJ0)/hfcl_diag64.o \
+	$(OUT_OBJ0)/hfcl_handler64.o \
+	$(OUT_OBJ0)/hfcl_ioctl64.o \
+	$(OUT_OBJ0)/hfcl_strategy64.o \
+	$(OUT_OBJ0)/hfcl_timer_recovery64.o \
+	$(OUT_OBJ0)/hfcl_mlpf64.o \
+	$(OUT_OBJ0)/hfcl_top64.o
+
+# CONF_OBJS64DPM = $(OUT_CONF_OBJ0)/hfcldd_conf.o
+
+CC_OPT64 = -D__KERNEL__ -DMODULE -D__LINUX -DHFC_IA64 -D_HFC_PCM -D_HFC_NO_CONF -Wall $(DBGFLAGS) -O -c -DEXPORT_SYMTAB
+CC_OPT64 += -D_LINUX_COM
+CC_OPT64 += -Wstrict-prototypes -fomit-frame-pointer -fno-strength-reduce \
+	-DSHT_HAS_VARY_IO -DMODVERSIONS -pipe \
+
+CC_OPT64DPM = $(CC_OPT64)
+CC_OPT64DPM += -include /usr/src/linux-$(OSVER0)/include/linux/modversions.h
+
+CC_CONF_OPT64DPM = $(CC_OPT64)
+CC_CONF_OPT64DPM += -include /usr/src/linux-$(OSVER0)/include/linux/modversions.h
+
+# all:hfctouch hfcldd64dpm hfcldd_conf64dpm
+all:hfctouch hfcldd64dpm 
+
+hfcldd64dpm:	$(OBJS64DPM)
+	echo "!!!!!!! Linking hfcldd64 (deploy manager)...."
+	ld -r -o $(OUT_LOAD0)/hfcldd.o $(OBJS64DPM)
+
+#------ hfcl_version.c	 ------#
+$(OUT_OBJ0)/hfcl_version64.o: hfcl_version.c
+	echo "## Compiling hfcl_version.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_version64.o hfcl_version.c 2> $(OUT_LOG0)/hfcl_version64.log
+
+#------ hfcl_detect.c	 ------#
+$(OUT_OBJ0)/hfcl_detect64.o: hfcl_detect.c
+	echo "## Compiling hfcl_detect.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_detect64.o hfcl_detect.c 2> $(OUT_LOG0)/hfcl_detect64.log
+
+#------ hfcl_diag.c	 ------#
+$(OUT_OBJ0)/hfcl_diag64.o: hfcl_diag.c
+	echo "## Compiling hfcl_diag.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_diag64.o hfcl_diag.c 2> $(OUT_LOG0)/hfcl_diag64.log
+
+#------ hfcl_handler.c	 ------#
+$(OUT_OBJ0)/hfcl_handler64.o: hfcl_handler.c
+	echo "## Compiling hfcl_handler.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_handler64.o hfcl_handler.c 2> $(OUT_LOG0)/hfcl_handler64.log
+
+#------ hfcl_ioctl.c	 ------#
+$(OUT_OBJ0)/hfcl_ioctl64.o: hfcl_ioctl.c
+	echo "## Compiling hfcl_ioctl.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_ioctl64.o hfcl_ioctl.c 2> $(OUT_LOG0)/hfcl_ioctl64.log
+
+#------ hfcl_strategy.c	 ------#
+$(OUT_OBJ0)/hfcl_strategy64.o: hfcl_strategy.c
+	echo "## Compiling hfcl_strategy.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_strategy64.o hfcl_strategy.c 2> $(OUT_LOG0)/hfcl_strategy64.log
+
+#------ hfcl_timer_recovery.c	 ------#
+$(OUT_OBJ0)/hfcl_timer_recovery64.o: hfcl_timer_recovery.c
+	echo "## Compiling hfcl_timer_recovery.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_timer_recovery64.o hfcl_timer_recovery.c 2> $(OUT_LOG0)/hfcl_timer_recovery64.log
+
+#------ hfcl_mlpf.c	 ------#
+$(OUT_OBJ0)/hfcl_mlpf64.o: hfcl_mlpf.c
+	echo "## Compiling hfcl_mlpf.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_mlpf64.o hfcl_mlpf.c 2> $(OUT_LOG0)/hfcl_mlpf64.log
+
+#----
+
+#------ hfcl_top.c	 ------#
+$(OUT_OBJ0)/hfcl_top64.o: hfcl_top.c
+	echo "## Compiling hfcl_top.c(64bit) (deploy manager)...."
+	$(CC) $(CC_OPT64DPM) $(INCLUDE0) -o $(OUT_OBJ0)/hfcl_top64.o hfcl_top.c 2> $(OUT_LOG0)/hfcl_top64.log
+
+#----
+
+# hfcldd_conf64dpm:	$(CONF_OBJS64DPM)
+#	echo "!!!!!!! Linking hfcldd_conf64 (deploy manager)...."
+#
+#------ hfcldd_conf.c	 ------#
+#$(OUT_CONF_OBJ0)/hfcldd_conf.o: hfcldd_conf.c
+#	echo "## Compiling hfcldd_conf.c(64bit) (deploy manager)...."
+#	$(CC) $(CC_CONF_OPT64DPM) $(INCLUDE0) -o $(OUT_CONF_OBJ0)/hfcldd_conf.o hfcldd_conf.c 2> $(OUT_CONF_LOG0)/hfcldd_conf64.log
+#
+#----
+
+
+hfctouch:
+	touch hfcl_version.c
+
+clean:
+	echo "## obj/load/log cleanup!...."
+	rm -f ${OBJS64DPM} $(OUT_LOAD0)/* $(OUT_LOG0)/*.log 

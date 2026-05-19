@@ -1,0 +1,54 @@
+#
+# $Log$
+# Revision 1.1.2.1.10.1  2008/09/15 22:43:11  compile3
+# *** empty log message ***
+#
+# Revision 1.1.2.1  2008/01/28 05:35:12  tteraya
+#
+# FCLNX-0512 feedback FC-GW
+#
+#
+# $Id$
+#
+# Makefile for FC-Adapter Driver(FCGW-C2NAS)
+#
+
+OSVER3  = SI60KA02
+
+EXTRA_CFLAGS := -D_LINUX_COM -D__LINUX -DHFC_NON_HOTPLUG -D_HFC_FCGW -D_HFC_NO_RASLOG
+
+ifeq ($(MODTYPE),n)
+	EXTRA_CFLAGS += -D_HFC_FCGW_NETBOOT
+endif
+
+MODS = hfcldd_conf.ko hfcldd.ko 
+OBJS = hfcldd_conf.o hfcldd.o 
+TARGET = $(MODS)
+
+.PHONY: allup3
+
+all : hfcldd_confup3 hfclddup3 moveup3
+
+allup3 : hfcldd_confup3 hfclddup3 moveup3
+
+hfcldd_confup3 : hfcldd_conf.c
+	make -C /usr/src/kernels/linux-enas64_$(OSVER3) M=`pwd` V=1 modules  >> result.log  2>> result.log
+
+hfclddup3 : hfcl_conf.c hfcl_detect.c hfcl_handler.c hfcl_diag.c hfcl_strategy.c hfcl_timer_recovery.c hfcl_top.c hfcl_ioctl.c hfcl_version.c hfcl_mlpf.c
+	make -C /usr/src/kernels/linux-enas64_$(OSVER3) M=`pwd` V=1 modules  >> result.log  2>> result.log
+
+moveup3 : 
+	mkdir -p    $(OSVER3)$(SMP)
+	mv ./*.o    $(OSVER3)$(SMP)/
+	mv ./*.ko   $(OSVER3)$(SMP)/
+	mv ./.*.cmd $(OSVER3)$(SMP)/
+	mv ./*.log  $(OSVER3)$(SMP)/
+
+clean : 
+	rm -rf $(OSVER3)$(SMP)
+
+obj-m:= $(OBJS)
+
+hfcldd-objs := hfcl_conf.o hfcl_detect.o hfcl_handler.o hfcl_diag.o hfcl_strategy.o hfcl_timer_recovery.o hfcl_top.o hfcl_ioctl.o hfcl_version.o hfcl_mlpf.o
+
+clean-files := *.o *.ko *.mod.[co]

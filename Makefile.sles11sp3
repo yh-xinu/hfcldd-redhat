@@ -1,0 +1,19 @@
+#
+# $Id$
+#
+# Makefile for FC-Adapter Driver
+#
+
+EXTRA_CFLAGS = -D_LINUX_COM -D__LINUX -DSYSFS_SUPPORT
+EXTRA_CFLAGS += -D_HFC_NO_RASLOG
+EXTRA_CFLAGS += -DHFC_X8664_SLES11SP3
+#EXTRA_CFLAGS += -D_HFC_DEBUG -D_HFC_MSGLVL3
+
+MODS = hfcldd_conf.ko hfcldd.ko
+OBJS = hfcldd_conf.o hfcldd.o
+TARGET = $(MODS)
+
+obj-m:= $(OBJS)
+
+hfcldd-objs := hfcl_conf.o hfcl_detect.o hfcl_handler.o hfcl_diag.o hfcl_strategy.o hfcl_timer_recovery.o hfcl_top.o hfcl_ioctl.o hfcl_version.o hfcl_mlpf.o \
+               hfcl_detect_fx.o hfcl_handler_fx.o hfcl_diag_fx.o hfcl_strategy_fx.o hfcl_timer_recovery_fx.o hfcl_top_fx.o hfcl_ioctl_fx.o hfcl_mlpf_fx.o hfcl_npiv_fx.o

@@ -1,0 +1,66 @@
+#
+# $Log$
+# Revision 1.20.2.1.2.1.2.4.2.1.12.1.2.1.6.2.8.2  2013/04/05 10:15:48  toyo
+# FCLNX-GPL-586
+#
+# Revision 1.20.2.1.2.1.2.4.2.1.12.1.2.1.6.2.2.1  2011/11/11 18:46:10  toyo
+#  commit Ver.x.6.17.2019
+#
+# Revision 1.1.2.3  2007/12/07 03:37:43  nkubota
+# FCLNX-0491 RHEL4.5 2.6.9-55.0.12.ELsmp X86-64 support
+#
+# Revision 1.1.2.2  2007/11/07 06:32:23  nkubota
+# FCLNX-0455 RASLOG support
+#
+# Revision 1.1.2.1  2007/11/07 05:00:26  nkubota
+# FCLNX-0455 RASLOG support
+#
+# Revision 1.1.2.1  2007/10/01 02:53:55  nkubota
+# FCLNX-0427 RHEL5 support
+#
+#
+# $Id$
+#
+# Makefile for FC-Adapter Driver(RHEL6)
+#
+
+OSVER0  = 2.6.32-131.0.15.el6.x86_64
+
+#EXTRA_CFLAGS := -D_LINUX_COM -D__LINUX -DSYSFS_SUPPORT -D_HFC_FX_PROTO -D_HFC_FX_HW_CHECK_SKIP
+EXTRA_CFLAGS := -D_LINUX_COM -D__LINUX -DSYSFS_SUPPORT -D_HFC_FX_PROTO -D_HFC_FX_HW_CHECK_SKIP -D_HFC_DEBUG -D_HFC_MSGLVL3 -Werror
+
+HOSTTYPE := $(shell uname -m)
+ifeq ($(HOSTTYPE),ia64)
+	EXTRA_CFLAGS += -DHFC_IA64_EL6
+	SMP=
+endif
+ifeq ($(HOSTTYPE),i686)
+	EXTRA_CFLAGS += -DHFC_IA32_EL6
+	SMP=
+endif
+ifeq ($(HOSTTYPE),x86_64)
+	EXTRA_CFLAGS += -DHFC_X8664_EL6
+	SMP=
+endif
+
+MODS = hraslog_link.ko hfcldd_conf.ko hfcldd.ko
+OBJS = hraslog_link.o hfcldd_conf.o hfcldd.o
+TARGET = $(MODS)
+
+.PHONY: all
+
+all:
+	rm -f result.log
+	make -C /lib/modules/$(OSVER0)$(SMP)/build M=`pwd` V=1 modules 2>&1 | tee -a result.log
+	mkdir -p $(OSVER0)$(SMP)
+	cp -fa ./*.o ./*.ko ./.*.cmd ./*.log $(OSVER0)$(SMP)/
+
+clean : 
+	make -C /lib/modules/$(OSVER0)$(SMP)/build M=`pwd` V=1 clean
+	rm -rf $(OSVER0)$(SMP)
+
+obj-m:= $(OBJS)
+
+hfcldd-objs := hfcl_conf.o hfcl_detect.o hfcl_handler.o hfcl_diag.o hfcl_strategy.o hfcl_timer_recovery.o hfcl_top.o hfcl_ioctl.o hfcl_version.o hfcl_mlpf.o hfcl_detect_fx.o hfcl_handler_fx.o hfcl_diag_fx.o hfcl_strategy_fx.o hfcl_timer_recovery_fx.o hfcl_top_fx.o hfcl_ioctl_fx.o hfcl_mlpf_fx.o hfcl_npiv_fx.o
+
+clean-files := *.o *.ko *.mod.[co] result.log

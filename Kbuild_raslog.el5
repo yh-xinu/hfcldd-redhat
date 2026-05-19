@@ -1,0 +1,15 @@
+EXTRA_CFLAGS := -D_LINUX_COM -D__LINUX -DSYSFS_SUPPORT
+
+HOSTTYPE := $(shell uname -m)
+ifeq ($(HOSTTYPE),ia64)
+	EXTRA_CFLAGS += -DHFC_IA64_EL5
+endif
+ifeq ($(HOSTTYPE),i686)
+	EXTRA_CFLAGS += -DHFC_IA32_EL5
+endif
+ifeq ($(HOSTTYPE),x86_64)
+	EXTRA_CFLAGS += -DHFC_X8664_EL5
+endif
+
+#obj-m		:= hraslog_link.o hfcldd_conf.o hfcldd.o
+obj-m		:= hraslog_link.o 
